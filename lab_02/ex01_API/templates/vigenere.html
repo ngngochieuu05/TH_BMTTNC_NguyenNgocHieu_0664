@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vigenere Cipher - Lab 02 Cipher Browser</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Be Khoa Cung Hieu Bien</div>
+    <div class="header-actions">
+      <button id="exportBtn" class="btn secondary" title="Export Postman JSON">Export Postman JSON</button>
+      <button id="themeToggle" class="theme-toggle" title="Toggle theme">🌙</button>
+    </div>
+  </header>
+  <main class="page">
+    <div class="page-head">
+      <h1>Vigenere Cipher</h1>
+    </div>
+    <form method="post">
+      <div class="grid">
+        <div class="field">
+          <label for="action">Tac vu</label>
+          <select id="action" name="action">
+            <option value="encrypt" {% if form_data.action == "encrypt" %}selected{% endif %}>Encrypt</option>
+            <option value="decrypt" {% if form_data.action == "decrypt" %}selected{% endif %}>Decrypt</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="key">Khoa (chu cai)</label>
+          <input id="key" name="key" placeholder="Nhap khoa chu cai" value="{{ form_data.key }}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="text">Noi dung</label>
+        <textarea id="text" name="text">{{ form_data.text }}</textarea>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Xu ly</button>
+      </div>
+    </form>
+
+    {% if error %}
+    <div class="error" id="error">{{ error }}</div>
+    {% endif %}
+
+    {% if result %}
+    <div class="result" id="result">{{ result }}</div>
+    <div class="result-actions">
+      <button id="copyBtn" type="button" class="btn">Copy</button>
+      <button id="selectBtn" type="button" class="btn">Select</button>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">© 2026 Be Khoa Cung Hieu Bien — Lab exercises and API browser</div>
+  </footer>
+</body>
+</html>
