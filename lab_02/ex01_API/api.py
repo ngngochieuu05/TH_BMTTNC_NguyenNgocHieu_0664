@@ -7,40 +7,71 @@ caesar_cipher = CaesarCipher()
 vigenere_cipher = VigenereCipher()
 
 
+def parse_json():
+    return request.get_json(silent=True) or {}
+
+
+def parse_caesar_key(data):
+    try:
+        return int(data["key"])
+    except (KeyError, TypeError, ValueError):
+        raise ValueError("Key must be an integer")
+
+
 @app.route("/caesar/encrypt", methods=["POST"])
+@app.route("/api/caesar/encrypt", methods=["POST"])
 def encrypt():
-    data = request.json
-    plain_text = data["plain_text"]
-    key = data["key"]
-    encrypted_text = caesar_cipher.encrypt_text(plain_text, key)
-    return jsonify({"encrypted_text": encrypted_text})
+    try:
+        data = parse_json()
+        plain_text = data["plain_text"]
+        key = parse_caesar_key(data)
+        encrypted_text = caesar_cipher.encrypt_text(plain_text, key)
+        return jsonify({"encrypted_text": encrypted_text})
+    except KeyError:
+        return jsonify({"error": "Missing field: plain_text"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/caesar/decrypt", methods=["POST"])
+@app.route("/api/caesar/decrypt", methods=["POST"])
 def decrypt():
-    data = request.json
-    encrypted_text = data["encrypted_text"]
-    key = data["key"]
-    decrypted_text = caesar_cipher.decrypt_text(encrypted_text, key)
-    return jsonify({"decrypted_text": decrypted_text})
+    try:
+        data = parse_json()
+        encrypted_text = data["encrypted_text"]
+        key = parse_caesar_key(data)
+        decrypted_text = caesar_cipher.decrypt_text(encrypted_text, key)
+        return jsonify({"decrypted_text": decrypted_text})
+    except KeyError:
+        return jsonify({"error": "Missing field: encrypted_text"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/vigenere/encrypt", methods=["POST"])
+@app.route("/api/vigenere/encrypt", methods=["POST"])
 def vigenere_encrypt():
-    data = request.json
-    plain_text = data["plain_text"]
-    key = data["key"]
-    encrypted_text = vigenere_cipher.encrypt_text(plain_text, key)
-    return jsonify({"encrypted_text": encrypted_text})
+    try:
+        data = parse_json()
+        plain_text = data["plain_text"]
+        key = data["key"]
+        encrypted_text = vigenere_cipher.encrypt_text(plain_text, key)
+        return jsonify({"encrypted_text": encrypted_text})
+    except KeyError as error:
+        return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
 
 
 @app.route("/vigenere/decrypt", methods=["POST"])
+@app.route("/api/vigenere/decrypt", methods=["POST"])
 def vigenere_decrypt():
-    data = request.json
-    encrypted_text = data["encrypted_text"]
-    key = data["key"]
-    decrypted_text = vigenere_cipher.decrypt_text(encrypted_text, key)
-    return jsonify({"decrypted_text": decrypted_text})
+    try:
+        data = parse_json()
+        encrypted_text = data["encrypted_text"]
+        key = data["key"]
+        decrypted_text = vigenere_cipher.decrypt_text(encrypted_text, key)
+        return jsonify({"decrypted_text": decrypted_text})
+    except KeyError as error:
+        return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
 
 
 if __name__ == "__main__":
