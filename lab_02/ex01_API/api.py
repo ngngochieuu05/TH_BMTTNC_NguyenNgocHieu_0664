@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from cipher.caesar import CaesarCipher
 from cipher.playfair import PlayfairCipher
 from cipher.railfence import RailFenceCipher
@@ -11,6 +11,14 @@ vigenere_cipher = VigenereCipher()
 playfair_cipher = PlayfairCipher()
 railfence_cipher = RailFenceCipher()
 transposition_cipher = TranspositionCipher()
+
+CIPHER_OPTIONS = [
+    ("caesar", "Caesar"),
+    ("vigenere", "Vigenere"),
+    ("playfair", "Playfair"),
+    ("railfence", "Rail Fence"),
+    ("transposition", "Transposition"),
+]
 
 
 def parse_json():
@@ -29,6 +37,81 @@ def parse_railfence_key(data):
         return int(data["key"])
     except (KeyError, TypeError, ValueError):
         raise ValueError("Key must be an integer")
+
+
+def process_cipher_request(algorithm: str, action: str, text: str, key: str):
+    if algorithm == "caesar":
+        parsed_key = int(key)
+        if action == "encrypt":
+            return caesar_cipher.encrypt_text(text, parsed_key)
+        return caesar_cipher.decrypt_text(text, parsed_key)
+
+    if algorithm == "vigenere":
+        if action == "encrypt":
+            return vigenere_cipher.encrypt_text(text, key)
+        return vigenere_cipher.decrypt_text(text, key)
+
+    if algorithm == "playfair":
+        if action == "encrypt":
+            return playfair_cipher.encrypt_text(text, key)
+        return playfair_cipher.decrypt_text(text, key)
+
+    if algorithm == "railfence":
+        parsed_key = int(key)
+        if action == "encrypt":
+            return railfence_cipher.encrypt_text(text, parsed_key)
+        return railfence_cipher.decrypt_text(text, parsed_key)
+
+    if algorithm == "transposition":
+        if action == "encrypt":
+            return transposition_cipher.encrypt_text(text, key)
+        return transposition_cipher.decrypt_text(text, key)
+
+    raise ValueError("Unsupported algorithm")
+
+
+@app.route("/", methods=["GET", "POST"])
+@app.route("/browser", methods=["GET", "POST"])
+def browser():
+    form_data = {
+        "algorithm": "caesar",
+        "action": "encrypt",
+        "text": "",
+        "key": "",
+    }
+    result = ""
+    error = ""
+
+    if request.method == "POST":
+        form_data["algorithm"] = request.form.get("algorithm", "caesar")
+        form_data["action"] = request.form.get("action", "encrypt")
+        form_data["text"] = request.form.get("text", "")
+        form_data["key"] = request.form.get("key", "").strip()
+
+        if not form_data["text"]:
+            error = "Vui long nhap noi dung can xu ly."
+        elif not form_data["key"]:
+            error = "Vui long nhap khoa."
+        else:
+            try:
+                result = process_cipher_request(
+                    form_data["algorithm"],
+                    form_data["action"],
+                    form_data["text"],
+                    form_data["key"],
+                )
+            except ValueError as exc:
+                error = str(exc)
+            except Exception as exc:
+                error = f"Khong the xu ly yeu cau: {exc}"
+
+    return render_template(
+        "index.html",
+        cipher_options=CIPHER_OPTIONS,
+        form_data=form_data,
+        result=result,
+        error=error,
+    )
 
 
 @app.route("/caesar/encrypt", methods=["POST"])
