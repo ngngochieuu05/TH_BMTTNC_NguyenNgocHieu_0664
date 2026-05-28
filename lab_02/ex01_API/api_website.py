@@ -45,9 +45,10 @@ def process_cipher_request(algorithm: str, action: str, text: str, key: str):
         return railfence_cipher.decrypt_text(text, parsed_key)
 
     if algorithm == "transposition":
+        parsed_key = int(key)
         if action == "encrypt":
-            return transposition_cipher.encrypt_text(text, key)
-        return transposition_cipher.decrypt_text(text, key)
+            return transposition_cipher.encrypt_text(text, parsed_key)
+        return transposition_cipher.decrypt_text(text, parsed_key)
 
     raise ValueError("Unsupported algorithm")
 

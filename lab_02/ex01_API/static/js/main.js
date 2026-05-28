@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     caesar: { action: 'encrypt', key: '3', text: 'HELLOWORLD' },
     vigenere: { action: 'encrypt', key: 'KEY', text: 'ATTACKATDAWN' },
     railfence: { action: 'encrypt', key: '3', text: 'WEAREDISCOVERED' },
-    playfair: { action: 'encrypt', key: 'MONARCHY', text: 'HELLO' },
-    transposition: { action: 'encrypt', key: '4', text: 'DEFENDTHEEASTWALL' }
+    playfair: { action: 'encrypt', key: 'MONARCHY', text: 'INSTRUMENTS' },
+    transposition: { action: 'encrypt', key: '4', text: 'HELLOWORLD' }
   };
 
   function clearActiveTestcase() {

@@ -10,11 +10,17 @@ class PlayfairCipher:
             if letter.isalpha() and letter not in formatted_key:
                 formatted_key.append(letter)
 
+        if not formatted_key:
+            raise ValueError("Key must contain letters")
+
         for letter in self.alphabet:
             if letter not in formatted_key:
                 formatted_key.append(letter)
 
         return formatted_key
+
+    def normalize_text(self, text: str):
+        return ''.join(letter for letter in text.upper().replace("J", "I") if letter.isalpha())
 
     def create_matrix(self, key: str):
         formatted_key = self.format_key(key)
@@ -33,7 +39,7 @@ class PlayfairCipher:
         return None, None
 
     def format_text(self, text: str):
-        text = ''.join(letter for letter in text.upper().replace("J", "I") if letter.isalpha())
+        text = self.normalize_text(text)
         pairs = []
         index = 0
 
@@ -90,7 +96,7 @@ class PlayfairCipher:
 
     def decrypt_text(self, text: str, key: str):
         matrix = self.create_matrix(key)
-        text = ''.join(letter for letter in text.upper().replace("J", "I") if letter.isalpha())
+        text = self.normalize_text(text)
         decrypt_text = []
 
         for index in range(0, len(text), 2):
@@ -98,4 +104,21 @@ class PlayfairCipher:
             if len(pair) == 2:
                 decrypt_text.append(self.decrypt_pair(matrix, pair))
 
-        return ''.join(decrypt_text)
+        return self.remove_filler_x(''.join(decrypt_text))
+
+    def remove_filler_x(self, text: str):
+        cleaned_text = []
+
+        for index, letter in enumerate(text):
+            is_middle_filler = (
+                letter == "X"
+                and 0 < index < len(text) - 1
+                and text[index - 1] == text[index + 1]
+                and index % 2 == 1
+            )
+            is_padding_x = letter == "X" and index == len(text) - 1
+
+            if not is_middle_filler and not is_padding_x:
+                cleaned_text.append(letter)
+
+        return ''.join(cleaned_text)

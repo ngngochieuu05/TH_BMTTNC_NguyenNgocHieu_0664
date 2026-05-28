@@ -39,6 +39,13 @@ def parse_railfence_key(data):
         raise ValueError("Key must be an integer")
 
 
+def parse_transposition_key(data):
+    try:
+        return int(data["key"])
+    except (KeyError, TypeError, ValueError):
+        raise ValueError("Key must be an integer")
+
+
 def process_cipher_request(algorithm: str, action: str, text: str, key: str):
     if algorithm == "caesar":
         parsed_key = int(key)
@@ -63,9 +70,10 @@ def process_cipher_request(algorithm: str, action: str, text: str, key: str):
         return railfence_cipher.decrypt_text(text, parsed_key)
 
     if algorithm == "transposition":
+        parsed_key = int(key)
         if action == "encrypt":
-            return transposition_cipher.encrypt_text(text, key)
-        return transposition_cipher.decrypt_text(text, key)
+            return transposition_cipher.encrypt_text(text, parsed_key)
+        return transposition_cipher.decrypt_text(text, parsed_key)
 
     raise ValueError("Unsupported algorithm")
 
@@ -181,6 +189,8 @@ def playfair_encrypt():
         return jsonify({"encrypted_text": encrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/playfair/decrypt", methods=["POST"])
@@ -194,6 +204,8 @@ def playfair_decrypt():
         return jsonify({"decrypted_text": decrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/railfence/encrypt", methods=["POST"])
@@ -232,11 +244,13 @@ def transposition_encrypt():
     try:
         data = parse_json()
         plain_text = data["plain_text"]
-        key = data["key"]
+        key = parse_transposition_key(data)
         encrypted_text = transposition_cipher.encrypt_text(plain_text, key)
         return jsonify({"encrypted_text": encrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/transposition/decrypt", methods=["POST"])
@@ -245,11 +259,13 @@ def transposition_decrypt():
     try:
         data = parse_json()
         encrypted_text = data["encrypted_text"]
-        key = data["key"]
+        key = parse_transposition_key(data)
         decrypted_text = transposition_cipher.decrypt_text(encrypted_text, key)
         return jsonify({"decrypted_text": decrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 if __name__ == "__main__":

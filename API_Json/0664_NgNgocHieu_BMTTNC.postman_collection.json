@@ -285,7 +285,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"plain_text\": \"HELLOWORLD\",\r\n  \"key\": \"ZEBRAS\"\r\n}",
+              "raw": "{\r\n  \"plain_text\": \"HELLOWORLD\",\r\n  \"key\": 4\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -318,7 +318,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"encrypted_text\": \"OXLLERLDWXHO\",\r\n  \"key\": \"ZEBRAS\"\r\n}",
+              "raw": "{\r\n  \"encrypted_text\": \"HOLEWDLOXLRX\",\r\n  \"key\": 4\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

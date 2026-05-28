@@ -31,6 +31,13 @@ def parse_railfence_key(data):
         raise ValueError("Key must be an integer")
 
 
+def parse_transposition_key(data):
+    try:
+        return int(data["key"])
+    except (KeyError, TypeError, ValueError):
+        raise ValueError("Key must be an integer")
+
+
 @app.route("/api/caesar/encrypt", methods=["POST"])
 def caesar_encrypt():
     try:
@@ -93,6 +100,8 @@ def playfair_encrypt():
         return jsonify({"encrypted_text": encrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/api/playfair/decrypt", methods=["POST"])
@@ -105,6 +114,8 @@ def playfair_decrypt():
         return jsonify({"decrypted_text": decrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/api/railfence/encrypt", methods=["POST"])
@@ -140,11 +151,13 @@ def transposition_encrypt():
     try:
         data = parse_json()
         plain_text = data["plain_text"]
-        key = data["key"]
+        key = parse_transposition_key(data)
         encrypted_text = transposition_cipher.encrypt_text(plain_text, key)
         return jsonify({"encrypted_text": encrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 @app.route("/api/transposition/decrypt", methods=["POST"])
@@ -152,11 +165,13 @@ def transposition_decrypt():
     try:
         data = parse_json()
         encrypted_text = data["encrypted_text"]
-        key = data["key"]
+        key = parse_transposition_key(data)
         decrypted_text = transposition_cipher.decrypt_text(encrypted_text, key)
         return jsonify({"decrypted_text": decrypted_text})
     except KeyError as error:
         return jsonify({"error": f"Missing field: {error.args[0]}"}), 400
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
 
 
 if __name__ == "__main__":
