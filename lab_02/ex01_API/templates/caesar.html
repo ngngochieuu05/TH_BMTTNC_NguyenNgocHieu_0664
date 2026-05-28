@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lab 02 Cipher Browser</title>
+  <title>Caesar Cipher - Lab 02 Cipher Browser</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </head>
@@ -11,32 +11,16 @@
   <header class="site-header">
     <div class="brand">Be Khoa Cung Hieu Bien</div>
     <div class="header-actions">
-      <button id="exportBtn" class="btn secondary" title="Export Postman JSON">Export</button>
+      <button id="exportBtn" class="btn secondary" title="Export Postman JSON">Export Postman JSON</button>
       <button id="themeToggle" class="theme-toggle" title="Toggle theme">🌙</button>
     </div>
   </header>
   <main class="page">
     <div class="page-head">
-      <h1>Lab 02 Cipher Browser - 0664_NguyenNgocHieu </h1>
+      <h1>Caesar Cipher</h1>
     </div>
     <form method="post">
       <div class="grid">
-        <div class="field">
-          <label for="algorithm">Thuat toan</label>
-          <select id="algorithm" name="algorithm">
-            {% for value, label in cipher_options %}
-            <option value="{{ value }}" {% if form_data.algorithm == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-          <div class="testcases">
-            <div class="testcases-header">Testcases</div>
-            <div class="testcases-list">
-              {% for value, label in cipher_options %}
-              <button type="button" class="testcase-btn" data-algo="{{ value }}" title="Tự điền testcase cho {{ label }}">{{ label }}</button>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
         <div class="field">
           <label for="action">Tac vu</label>
           <select id="action" name="action">
@@ -44,11 +28,10 @@
             <option value="decrypt" {% if form_data.action == "decrypt" %}selected{% endif %}>Decrypt</option>
           </select>
         </div>
-      </div>
-
-      <div class="field">
-        <label for="key">Khoa</label>
-        <input id="key" name="key" value="{{ form_data.key }}">
+        <div class="field">
+          <label for="key">Khoa (so nguyen)</label>
+          <input id="key" name="key" type="number" value="{{ form_data.key }}">
+        </div>
       </div>
 
       <div class="field">
