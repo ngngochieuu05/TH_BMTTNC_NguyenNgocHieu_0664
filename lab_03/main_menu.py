@@ -15,16 +15,12 @@ class MainMenuWindow(QMainWindow):
 
         attach_protocol_menu(self, "menu")
 
-        self.btn_caesar = QPushButton("Caesar", self)
-        self.btn_caesar.setGeometry(220, 170, 420, 48)
-        self.btn_caesar.clicked.connect(lambda: self.open_protocol("caesar"))
-
         self.btn_rsa = QPushButton("RSA", self)
-        self.btn_rsa.setGeometry(220, 245, 420, 48)
+        self.btn_rsa.setGeometry(220, 200, 420, 48)
         self.btn_rsa.clicked.connect(lambda: self.open_protocol("rsa"))
 
         self.btn_ecc = QPushButton("ECC", self)
-        self.btn_ecc.setGeometry(220, 320, 420, 48)
+        self.btn_ecc.setGeometry(220, 280, 420, 48)
         self.btn_ecc.clicked.connect(lambda: self.open_protocol("ecc"))
 
     def open_protocol(self, protocol_name):

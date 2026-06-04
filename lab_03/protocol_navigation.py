@@ -33,7 +33,6 @@ def attach_protocol_menu(window, current_protocol):
     protocol_menu = window.menuBar().addMenu("Protocol")
     labels = [
         ("menu", "Main Menu"),
-        ("caesar", "Caesar"),
         ("rsa", "RSA"),
         ("ecc", "ECC"),
     ]
