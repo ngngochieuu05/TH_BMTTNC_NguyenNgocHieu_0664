@@ -26,8 +26,12 @@ class ECCCipher:
     def __init__(self):
         key_dir = Path(__file__).resolve().parent / "keys"
         key_dir.mkdir(parents=True, exist_ok=True)
-        self.private_key_path = key_dir / "private_key.json"
-        self.public_key_path = key_dir / "public_key.json"
+        # Use PEM files like RSA (private_key.pem / public_key.pem)
+        self.private_key_path = key_dir / "private_key.pem"
+        self.public_key_path = key_dir / "public_key.pem"
+
+        # byte length for coordinates/scalars (secp256k1 -> 32 bytes)
+        self._byte_len = (self.P.bit_length() + 7) // 8
 
     def inverse_mod(self, value: int, modulus: int) -> int:
         return pow(value, -1, modulus)
@@ -79,18 +83,81 @@ class ECCCipher:
     def generate_keys(self):
         private_key = secrets.randbelow(self.N - 1) + 1
         public_key = self.scalar_mult(private_key, self.G)
-        self.private_key_path.write_text(json.dumps({"d": private_key}), encoding="utf-8")
-        self.public_key_path.write_text(
-            json.dumps({"x": public_key.x, "y": public_key.y}),
-            encoding="utf-8",
-        )
+        # Private: store raw scalar as fixed-length big-endian bytes, wrapped in PEM
+        priv_bytes = private_key.to_bytes(self._byte_len, "big")
+        self._write_pem(self.private_key_path, "ECC PRIVATE KEY", priv_bytes)
+
+        # Public: use uncompressed point format 0x04 || X || Y
+        x_bytes = public_key.x.to_bytes(self._byte_len, "big")
+        y_bytes = public_key.y.to_bytes(self._byte_len, "big")
+        pub_raw = b"\x04" + x_bytes + y_bytes
+        self._write_pem(self.public_key_path, "ECC PUBLIC KEY", pub_raw)
 
     def load_keys(self):
-        private_key_data = json.loads(self.private_key_path.read_text(encoding="utf-8"))
-        public_key_data = json.loads(self.public_key_path.read_text(encoding="utf-8"))
-        private_key = private_key_data["d"]
-        public_key = CurvePoint(public_key_data["x"], public_key_data["y"])
+        # Support both new PEM format and legacy JSON files (migration)
+        # Private key
+        if self.private_key_path.exists():
+            priv_raw = self._read_pem(self.private_key_path)
+            if priv_raw is None:
+                # maybe legacy json
+                raw = json.loads(self.private_key_path.read_text(encoding="utf-8"))
+                private_key = int(raw.get("d"))
+            else:
+                # expect fixed-length big-endian scalar
+                private_key = int.from_bytes(priv_raw, "big")
+        else:
+            raise FileNotFoundError(f"Private key not found: {self.private_key_path}")
+
+        # Public key
+        if self.public_key_path.exists():
+            pub_raw = self._read_pem(self.public_key_path)
+            if pub_raw is None:
+                raw = json.loads(self.public_key_path.read_text(encoding="utf-8"))
+                public_key = CurvePoint(int(raw.get("x")), int(raw.get("y")))
+            else:
+                # expect uncompressed form 0x04 || X || Y
+                if len(pub_raw) == 1 + 2 * self._byte_len and pub_raw[0] == 0x04:
+                    x = int.from_bytes(pub_raw[1 : 1 + self._byte_len], "big")
+                    y = int.from_bytes(pub_raw[1 + self._byte_len : 1 + 2 * self._byte_len], "big")
+                    public_key = CurvePoint(x, y)
+                else:
+                    # fallback to attempt JSON
+                    raw = json.loads(self.public_key_path.read_text(encoding="utf-8"))
+                    public_key = CurvePoint(int(raw.get("x")), int(raw.get("y")))
+        else:
+            raise FileNotFoundError(f"Public key not found: {self.public_key_path}")
+
         return private_key, public_key
+
+    # --- PEM helpers ---
+    def _wrap_pem(self, header: str, b64: str) -> str:
+        lines = [f"-----BEGIN {header}-----"]
+        # wrap at 64 chars
+        for i in range(0, len(b64), 64):
+            lines.append(b64[i : i + 64])
+        lines.append(f"-----END {header}-----")
+        return "\n".join(lines) + "\n"
+
+    def _write_pem(self, path: Path, header: str, raw_bytes: bytes):
+        b64 = base64.b64encode(raw_bytes).decode("ascii")
+        content = self._wrap_pem(header, b64)
+        path.write_text(content, encoding="utf-8")
+
+    def _read_pem(self, path: Path) -> bytes | None:
+        text = path.read_text(encoding="utf-8").strip()
+        if text.startswith("-----BEGIN"):
+            # extract base64 between header and footer
+            parts = text.splitlines()
+            # find first line that starts with '-----BEGIN'
+            try:
+                # assume header/footer present
+                b64_lines = [l for l in parts if not l.startswith("-----")]
+                b64 = "".join(b64_lines)
+                return base64.b64decode(b64)
+            except Exception:
+                return None
+        else:
+            return None
 
     def derive_keystream(self, shared_secret: int, length: int) -> bytes:
         stream = bytearray()
