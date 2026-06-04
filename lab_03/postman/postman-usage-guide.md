@@ -34,7 +34,7 @@ lab_02/ex01_API/postman/api-cipher.postman_collection.json
 ```
 
 4. Sau khi import se thay collection `API Cipher`.
-5. Cau truc collection sau khi bo sung RSA:
+5. Cau truc collection sau khi bo sung RSA va ECC:
 
 ```text
 API Cipher
@@ -58,7 +58,13 @@ API Cipher
 |   |-- POST Encrypt
 |   |-- POST Decrypt
 |   `-- POST Details / Matrix
-`-- RSA
+|-- RSA
+|   |-- GET Generate Keys
+|   |-- POST Encrypt
+|   |-- POST Decrypt
+|   |-- POST Sign
+|   `-- POST Verify
+`-- ECC
     |-- GET Generate Keys
     |-- POST Encrypt
     |-- POST Decrypt
@@ -271,6 +277,86 @@ Neu message bi thay doi hoac signature sai, ket qua co the la:
 }
 ```
 
+## 4a. Cach test nhanh ECC
+
+ECC co 5 request tuong tu RSA:
+
+```text
+ECC
+|-- GET Generate Keys
+|-- POST Encrypt
+|-- POST Decrypt
+|-- POST Sign
+`-- POST Verify
+```
+
+Thu tu test:
+
+```text
+1. ECC / Generate Keys
+2. ECC / Encrypt
+3. ECC / Decrypt
+4. ECC / Sign
+5. ECC / Verify
+```
+
+### 4a.1. Generate Keys
+Tao cap khoa ECC (private_key.json va public_key.json).
+```text
+GET {{base_url}}/ecc/generate_keys
+```
+
+### 4a.2. Encrypt
+Mã hóa dùng public key.
+```text
+POST {{base_url}}/ecc/encrypt
+```
+Body mau:
+```json
+{
+  "message": "HUtech"
+}
+```
+Ket qua tra ve chua `encrypted_message` (Base64) se duoc tu dong luu vao bien `ecc_ciphertext`.
+
+### 4a.3. Decrypt
+Giai ma dung private key.
+```text
+POST {{base_url}}/ecc/decrypt
+```
+Body mau:
+```json
+{
+  "ciphertext": "{{ecc_ciphertext}}"
+}
+```
+
+### 4a.4. Sign
+Ky chu ky so bang private key.
+```text
+POST {{base_url}}/ecc/sign
+```
+Body mau:
+```json
+{
+  "message": "HUtech"
+}
+```
+Ket qua tra ve chua `signature` (Hex) se duoc tu dong luu vao bien `ecc_signature`.
+
+### 4a.5. Verify
+Xac thuc chu ky so.
+```text
+POST {{base_url}}/ecc/verify
+```
+Body mau:
+```json
+{
+  "message": "HUtech",
+  "signature": "{{ecc_signature}}"
+}
+```
+
 ## 5. Xem ma tran trong Postman
 
 Request `Details / Matrix` dung chung endpoint:
@@ -314,15 +400,20 @@ Luu y: RSA khong co request `Details / Matrix` vi RSA khong dung bang chu cai/ma
 | Rail Fence | `POST /railfence/encrypt` | `POST /railfence/decrypt` | `POST /railfence/details` |
 | Transposition | `POST /transposition/encrypt` | `POST /transposition/decrypt` | `POST /transposition/details` |
 
-### 6.2. RSA
+### 6.2. RSA va ECC
 
-| Chuc nang | Method | Endpoint |
-|---|---:|---|
-| Tao khoa | GET | `/rsa/generate_keys` |
-| Ma hoa | POST | `/rsa/encrypt` |
-| Giai ma | POST | `/rsa/decrypt` |
-| Ky chu ky so | POST | `/rsa/sign` |
-| Xac thuc chu ky so | POST | `/rsa/verify` |
+| Thuat toan | Chuc nang | Method | Endpoint |
+|---|---|---:|---|
+| **RSA** | Tao khoa | GET | `/rsa/generate_keys` |
+| | Ma hoa | POST | `/rsa/encrypt` |
+| | Giai ma | POST | `/rsa/decrypt` |
+| | Ky chu ky so | POST | `/rsa/sign` |
+| | Xac thuc chu ky so | POST | `/rsa/verify` |
+| **ECC** | Tao khoa | GET | `/ecc/generate_keys` |
+| | Ma hoa | POST | `/ecc/encrypt` |
+| | Giai ma | POST | `/ecc/decrypt` |
+| | Ky chu ky so | POST | `/ecc/sign` |
+| | Xac thuc chu ky so | POST | `/ecc/verify` |
 
 ## 7. Body mau
 
@@ -394,6 +485,39 @@ Verify:
 }
 ```
 
+### 7.3. Body mau cho ECC
+
+Generate Keys khong can body.
+
+Encrypt:
+```json
+{
+  "message": "HUtech"
+}
+```
+
+Decrypt:
+```json
+{
+  "ciphertext": "{{ecc_ciphertext}}"
+}
+```
+
+Sign:
+```json
+{
+  "message": "HUtech"
+}
+```
+
+Verify:
+```json
+{
+  "message": "HUtech",
+  "signature": "{{ecc_signature}}"
+}
+```
+
 ## 8. Collection Variables
 
 Collection dang su dung cac bien sau:
@@ -408,6 +532,8 @@ Collection dang su dung cac bien sau:
 | `transposition_cipher_text` | Luu ket qua ma hoa Transposition |
 | `rsa_ciphertext` | Luu ket qua ma hoa RSA |
 | `rsa_signature` | Luu chu ky so RSA |
+| `ecc_ciphertext` | Luu ket qua ma hoa ECC |
+| `ecc_signature` | Luu chu ky so ECC |
 
 Neu doi host/port, vao collection `API Cipher` -> `Variables` -> sua `base_url`.
 
@@ -417,7 +543,8 @@ Neu doi host/port, vao collection `API Cipher` -> `Variables` -> sua `base_url`.
 - `Vigenere`, `Playfair`, `Transposition` dung key dang chuoi.
 - `Playfair` chuyen chuoi ve chu hoa, bo khoang trang, doi `J` thanh `I`.
 - `Transposition` tu them ky tu dem `X` khi do dai chuoi khong chia het cho do dai key.
-- RSA can chay `Generate Keys` truoc khi `Encrypt`, `Decrypt`, `Sign`, `Verify`.
-- RSA ma hoa bang `public key` va giai ma bang `private key`.
-- RSA ky chu ky so bang `private key` va xac thuc chu ky so bang `public key`.
-- Neu request RSA bi loi do khong tim thay key, kiem tra folder `key` da co `publicKey.pem` va `privateKey.pem` chua.
+- Ca RSA va ECC can chay `Generate Keys` truoc khi `Encrypt`, `Decrypt`, `Sign`, `Verify`.
+- RSA ma hoa bang `public key` va giai ma bang `private key`, luu o dang file `.pem` trong folder `keys`.
+- ECC luu cap khoa trong file JSON (`private_key.json` va `public_key.json`) trong folder `keys` tuong ung.
+- ECC su dung cac gia tri ngau nhien (nonce) trong qua trinh ma hoa va ky so, nen moi lan chay se sinh ra ciphertext va signature khac nhau (nhung van decrypt va verify hop le).
+- Neu request bi loi do khong tim thay file key, hãy kiem tra folder keys cua thuat toan xem da duoc tao chua.

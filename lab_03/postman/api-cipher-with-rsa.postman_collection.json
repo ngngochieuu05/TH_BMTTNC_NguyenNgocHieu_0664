@@ -605,6 +605,176 @@
           ]
         }
       ]
+    },
+    {
+      "name": "ECC",
+      "item": [
+        {
+          "name": "Generate Keys",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/ecc/generate_keys"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Encrypt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/ecc/encrypt",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"HUtech\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const jsonData = pm.response.json();",
+                  "pm.collectionVariables.set(\"ecc_ciphertext\", jsonData.encrypted_message);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Decrypt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/ecc/decrypt",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ciphertext\": \"{{ecc_ciphertext}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/ecc/sign",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"HUtech\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const jsonData = pm.response.json();",
+                  "pm.collectionVariables.set(\"ecc_signature\", jsonData.signature);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/ecc/verify",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"HUtech\",\n  \"signature\": \"{{ecc_signature}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
@@ -638,6 +808,14 @@
     },
     {
       "key": "rsa_signature",
+      "value": ""
+    },
+    {
+      "key": "ecc_ciphertext",
+      "value": ""
+    },
+    {
+      "key": "ecc_signature",
       "value": ""
     }
   ]
