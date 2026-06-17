@@ -1,0 +1,6 @@
+flask
+flask-sock
+pycryptodome
+rsa
+Pillow
+cryptography
