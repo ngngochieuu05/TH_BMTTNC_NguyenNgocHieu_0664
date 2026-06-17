@@ -1,0 +1,165 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bài Tổng Hợp Lab 01-05</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Cổng Ôn Tập TH_BMTTNC</p>
+      <h1>Bài Tổng Hợp Từ Lab 01 Đến Lab 05</h1>
+      <p class="lede">Một cổng tổng hợp để ôn bài gồm nhập xuất cơ bản, mã hóa cổ điển, RSA, ECC, hàm băm, blockchain, giấu tin trong ảnh và websocket.</p>
+    </header>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>Tổng Quan</h2>
+        <button data-action="overview">Tải tóm tắt các lab</button>
+        <pre id="overview-output"></pre>
+      </article>
+
+      <article class="card">
+        <h2>WebSocket Từ Ngẫu Nhiên</h2>
+        <button data-action="ws-connect">Kết nối</button>
+        <button data-action="ws-disconnect">Ngắt kết nối</button>
+        <pre id="ws-output"></pre>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>Lab 01 Cơ Bản</h2>
+        <div class="stack">
+          <input id="basic-name" placeholder="Tên">
+          <input id="basic-age" placeholder="Tuổi" type="number">
+          <button data-action="basic-greet">Chào người dùng</button>
+          <input id="basic-radius" placeholder="Bán kính" type="number" step="0.1">
+          <button data-action="basic-circle">Tính diện tích hình tròn</button>
+          <input id="basic-number" placeholder="Số nguyên" type="number">
+          <button data-action="basic-parity">Kiểm tra chẵn lẻ</button>
+          <input id="basic-values" placeholder="1,2,3,4">
+          <button data-action="basic-even-sum">Tính tổng số chẵn</button>
+          <input id="basic-text" placeholder="Chuỗi cần đảo">
+          <button data-action="basic-reverse">Đảo chuỗi</button>
+        </div>
+        <pre id="basic-output"></pre>
+      </article>
+
+      <article class="card">
+        <h2>Quản Lý Sinh Viên</h2>
+        <div class="stack">
+          <input id="student-name" placeholder="Tên sinh viên">
+          <input id="student-sex" placeholder="Giới tính">
+          <input id="student-major" placeholder="Chuyên ngành">
+          <input id="student-diem" placeholder="Điểm trung bình" type="number" step="0.1">
+          <button data-action="student-add">Thêm sinh viên</button>
+          <input id="student-search" placeholder="Tìm theo tên">
+          <button data-action="student-search">Tìm kiếm</button>
+          <button data-action="student-list">Xem danh sách</button>
+          <button data-action="student-sort-name">Sắp xếp theo tên</button>
+          <button data-action="student-sort-score">Sắp xếp theo điểm</button>
+        </div>
+        <pre id="student-output"></pre>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>Mã Hóa Cổ Điển</h2>
+        <div class="stack">
+          <select id="classical-algorithm">
+            <option value="caesar">Caesar</option>
+            <option value="vigenere">Vigenere</option>
+            <option value="playfair">Playfair</option>
+            <option value="railfence">Rail Fence</option>
+            <option value="transposition">Chuyển vị</option>
+          </select>
+          <select id="classical-action">
+            <option value="encrypt">Mã hóa</option>
+            <option value="decrypt">Giải mã</option>
+          </select>
+          <input id="classical-text" placeholder="Bản rõ hoặc bản mã">
+          <input id="classical-key" placeholder="Khóa">
+          <button data-action="classical-run">Thực thi</button>
+        </div>
+        <pre id="classical-output"></pre>
+      </article>
+
+      <article class="card">
+        <h2>Hàm Băm và Base64</h2>
+        <div class="stack">
+          <select id="hash-algorithm">
+            <option value="md5">MD5</option>
+            <option value="sha256">SHA-256</option>
+            <option value="sha3_256">SHA-3 256</option>
+            <option value="blake2b">BLAKE2b</option>
+          </select>
+          <input id="hash-text" placeholder="Dữ liệu đầu vào">
+          <button data-action="hash-run">Băm dữ liệu</button>
+          <input id="base64-text" placeholder="Nội dung Base64">
+          <button data-action="base64-encode">Mã hóa Base64</button>
+          <button data-action="base64-decode">Giải mã Base64</button>
+        </div>
+        <pre id="hash-output"></pre>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>RSA và ECC</h2>
+        <div class="stack">
+          <input id="modern-text" placeholder="Thông điệp">
+          <button data-action="rsa-generate">Tạo khóa RSA</button>
+          <button data-action="rsa-encrypt">Mã hóa RSA</button>
+          <button data-action="rsa-decrypt">Giải mã RSA</button>
+          <button data-action="rsa-sign">Ký RSA</button>
+          <button data-action="rsa-verify">Xác minh RSA</button>
+          <button data-action="ecc-generate">Tạo khóa ECC</button>
+          <button data-action="ecc-encrypt">Mã hóa ECC</button>
+          <button data-action="ecc-decrypt">Giải mã ECC</button>
+          <button data-action="ecc-sign">Ký ECC</button>
+          <button data-action="ecc-verify">Xác minh ECC</button>
+        </div>
+        <pre id="modern-output"></pre>
+      </article>
+
+      <article class="card">
+        <h2>Blockchain</h2>
+        <div class="stack">
+          <input id="tx-sender" placeholder="Người gửi">
+          <input id="tx-receiver" placeholder="Người nhận">
+          <input id="tx-amount" placeholder="Số lượng" type="number" step="0.1">
+          <button data-action="blockchain-add">Thêm giao dịch</button>
+          <button data-action="blockchain-mine">Đào khối</button>
+          <button data-action="blockchain-state">Xem chuỗi khối</button>
+        </div>
+        <pre id="blockchain-output"></pre>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>Giấu Tin Trong Ảnh</h2>
+        <div class="stack">
+          <input id="steg-file" type="file" accept="image/*">
+          <input id="steg-message" placeholder="Thông điệp bí mật">
+          <button data-action="steg-encode">Mã hóa vào ảnh</button>
+          <button data-action="steg-decode">Giải mã từ ảnh</button>
+        </div>
+        <pre id="steg-output"></pre>
+      </article>
+
+      <article class="card">
+        <h2>Script Mô Phỏng</h2>
+        <button data-action="scripts-load">Hiện lệnh chạy</button>
+        <pre id="scripts-output"></pre>
+      </article>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
