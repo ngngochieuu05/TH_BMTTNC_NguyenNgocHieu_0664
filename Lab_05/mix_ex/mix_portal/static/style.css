@@ -1,0 +1,116 @@
+:root {
+  --bg: #f4efe7;
+  --ink: #1d2a38;
+  --card: #fffdf9;
+  --accent: #c5522d;
+  --accent-dark: #8a3319;
+  --line: #d7c7b4;
+  --muted: #5d6a72;
+  --shadow: 0 16px 40px rgba(29, 42, 56, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(197, 82, 45, 0.16), transparent 28%),
+    linear-gradient(180deg, #f8f4ed 0%, #ede2d2 100%);
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+.hero {
+  padding: 28px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,247,238,0.94));
+  box-shadow: var(--shadow);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+  color: var(--accent-dark);
+}
+
+h1, h2 {
+  margin: 0 0 12px;
+}
+
+.lede {
+  margin: 0;
+  color: var(--muted);
+  max-width: 72ch;
+}
+
+.grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.card {
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+button:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+pre {
+  min-height: 92px;
+  padding: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+  background: #f7f2ea;
+  border: 1px dashed var(--line);
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 14px 36px;
+  }
+
+  .hero,
+  .card {
+    padding: 16px;
+  }
+}
