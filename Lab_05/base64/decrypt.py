@@ -2,7 +2,7 @@ import base64
 
 def main():
     try:
-        with open("data.txt", "r") as file:
+        with open("M:/BMTTNC_NgNgocHieu_0664/TH_BMTTNC_NguyenNgocHieu_0664/Lab_05/base64/data.txt", "r") as file:
             encoded_string = file.read().strip()
         
         decoded_bytes = base64.b64decode(encoded_string)
